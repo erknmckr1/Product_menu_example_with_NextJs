@@ -1,6 +1,8 @@
 import React from "react";
 import { useState } from "react";
-
+import axios from "axios";
+import toast from "react-toastify";
+import { data } from "autoprefixer";
 function Index() {
   const [formData, setFormData] = useState({
     title: "",
@@ -8,9 +10,10 @@ function Index() {
     price: "",
     category: "",
   });
+
   const [imageSrc, setImageSrc] = useState();
   const [imageFile, setImageFile] = useState();
-  const [touchedFields, setTouchedFields] = useState({}); // Touched durumları için kullanılan bir nesne
+  const [touchedFields, setTouchedFields] = useState({});
 
   const handleInputChange = (fieldName, value) => {
     setFormData({
@@ -18,43 +21,73 @@ function Index() {
       [fieldName]: value,
     });
 
-    // Alanın dokunduğunu işaretlemek için touchedFields nesnesini güncelleyin
     setTouchedFields({
       ...touchedFields,
       [fieldName]: true,
     });
   };
 
- 
-
-  //! FileReader
   const handleFileChange = (changeEvent) => {
     const reader = new FileReader();
-
-    //! Gelen dosyayı base64 formatında oku
-    reader.readAsDataURL(changeEvent.target.files[0]);
 
     reader.onload = function (onLoadEvent) {
       setImageSrc(onLoadEvent.target.result);
       setImageFile(changeEvent.target.files[0]);
     };
+
+    reader.onerror = function (error) {
+      console.error("Dosya okuma hatası:", error);
+    };
+
+    reader.readAsDataURL(changeEvent.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const createProduct = async (e) => {
     e.preventDefault();
-    console.log("Gönderilen Veriler:", formData);
+
+    // FormData nesnesi oluştur
+    const data = new FormData();
+    data.append("file", imageFile);
+    data.append("upload_preset", "sensifa");
+
+    try {
+      const uploadImg = await axios.post(
+        "https://api.cloudinary.com/v1_1/dtar4nbiw/image/upload",
+        data
+      );
+
+      const { url } = uploadImg.data;
+
+      const productInfo = {
+        title:formData.title,
+        description: formData.description,
+        price: parseInt(formData.price),
+        category:formData.category,
+        imgUrl:url,
+      }
+
+      console.log(productInfo)
+    } catch (error) {
+      console.error("Hata: ", error);
+    }
   };
 
   return (
     <div className="w-screen h-screen">
-      <div className="w-full h-full flex justify-center items-center">
-        <div className="w-[800px] h-[800px] border-4 border-black">
+      {/* navbar */}
+      <div className="h-[100px] w-full px-2 sm:p-0 bg-gray-300 flex justify-between ">
+        <div className="sm:w-2/3 h-full flex justify-center items-center">
+          <span className="text-[30px]">LOGO</span>
+        </div>
+      </div>
+      <div className="w-full h-full max-h-[calc(100vh_-_100px)] flex justify-center items-center">
+        <div className="w-[800px] h-[800px] border-y-4  border-black">
           <div className="p-5 w-full h-auto text-center">
             <span className="text-[30px] lg:text-[40px]">xyz</span>
           </div>
           <form
             className="w-full px-10 h-auto bg-slate-100"
-            onSubmit={handleSubmit}
+            onSubmit={createProduct}
           >
             <div className="w-full h-auto flex flex-col gap-y-4">
               <Input
@@ -82,8 +115,7 @@ function Index() {
                 onChange={(value) => handleInputChange("price", value)}
               />
             </div>
-            {/* upload ımage... */}
-            <div className="flex w-full py-5 ">
+            <div className="flex w-full py-5">
               <label className="flex gap-2 items-center">
                 <input
                   type="file"
@@ -91,11 +123,10 @@ function Index() {
                   className="hidden"
                 />
                 <button className="btn p-3 bg-black text-white pointer-events-none rounded-md hover:bg-blue-300 transition duration-300 ease-in-out hover:scale-110">
-                  Choose an Image
+                  Fotoğraf Seç
                 </button>
                 {imageSrc && (
                   <div>
-                    {/*eslint-disable-next-line @next/next/no-img-element*/}
                     <img
                       src={imageSrc}
                       alt=""
@@ -108,9 +139,9 @@ function Index() {
             <div className="w-full h-auto flex justify-center items-center mt-4">
               <button
                 type="submit"
-                className="w-36 py-3 bg-black  text-white font-semibold rounded-md hover:bg-blue-300 transition duration-300 ease-in-out hover:scale-110"
+                className="w-36 py-3 bg-black text-white font-semibold rounded-md hover:bg-blue-300 transition duration-300 ease-in-out hover:scale-110"
               >
-                Gönder
+                Ekle
               </button>
             </div>
           </form>
@@ -121,7 +152,6 @@ function Index() {
 }
 
 export default Index;
-
 
 // ınput component
 function Input(props) {
