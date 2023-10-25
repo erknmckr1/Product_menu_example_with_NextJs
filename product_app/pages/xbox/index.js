@@ -1,8 +1,8 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
-import toast from "react-toastify";
-import { data } from "autoprefixer";
+import { toast } from "react-toastify";
+
 function Index() {
   const [formData, setFormData] = useState({
     title: "",
@@ -44,6 +44,7 @@ function Index() {
 
   const createProduct = async (e) => {
     e.preventDefault();
+    const number = Math.floor(Math.random()*99999) + 1
 
     // FormData nesnesi oluştur
     const data = new FormData();
@@ -59,14 +60,26 @@ function Index() {
       const { url } = uploadImg.data;
 
       const productInfo = {
-        title:formData.title,
+        title: formData.title,
         description: formData.description,
+        id:number,
         price: parseInt(formData.price),
-        category:formData.category,
-        imgUrl:url,
-      }
+        category: formData.category,
+        img_url: url,
+      };
 
-      console.log(productInfo)
+      const postProduct = await axios.post("/api/xbox", productInfo);
+      if (postProduct.status === 200) {
+        toast.success("Ürün başarıyla kaydedildi.");
+        setFormData({
+          title: "",
+          description: "",
+          price: "",
+          category: "",
+        });
+        setImageFile("");
+        setImageSrc("");
+      }
     } catch (error) {
       console.error("Hata: ", error);
     }
