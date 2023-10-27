@@ -1,4 +1,3 @@
-import { product } from "@/product";
 import Image from "next/image";
 import { categories } from "@/product";
 import { useState, useEffect } from "react";
@@ -11,6 +10,7 @@ export default function Home() {
   const [openInput, setOpenInput] = useState(false);
   const [filteredProduct, setFilteredProduct] = useState([]);
   const [products,setProducts] = useState([])
+
    // get products
    useEffect(()=>{
     const getProduct = async () => {
@@ -22,10 +22,14 @@ export default function Home() {
       }
     }
     getProduct();
+    
   },[])
+ 
+  console.log(products)
+  
 
   useEffect(() => {
-    const updatedProduct = product.filter((item) => {
+    const updatedProduct = products.length > 0 &&  products.filter((item) => {
       if (
         (clickedCategory === "All" || item.category === clickedCategory) &&
         (searchText === "" ||
@@ -37,16 +41,16 @@ export default function Home() {
     });
 
     setFilteredProduct(updatedProduct);
-  }, [clickedCategory, searchText]);
-
+  }, [clickedCategory, searchText, products]);
+  
  
   
   return (
     <div className="w-screen h-screen">
       {/* navbar start */}
-      <div className="h-[100px] w-full px-2 sm:p-0 bg-gray-300 flex justify-between ">
-        <div className="sm:w-2/3 h-full flex justify-center items-center">
-          <span className="text-[30px]">LOGO</span>
+      <div className="h-[100px] w-full px-2 sm:p-0 bg-gray-300 flex justify-between  ">
+        <div className="sm:w-2/3 h-full flex justify-center items-center ">
+          <Image className="w-[120px] p-1" alt="" src="/remove_logo.png" width={200} height={200}/>
         </div>
         <div className="sm:w-1/3 h-full flex justify-center items-center">
           <input
@@ -70,8 +74,8 @@ export default function Home() {
       <div className="w-full h-full max-h-[calc(100vh_-_100px)]">
         <div className="w-full mx-auto container">
           {/* buttons */}
-          <div className="w-full h-full pt-5">
-            <div className="w-auto h-full flex gap-x-3 items-center justify-center">
+          <div className="w-full h-full pt-5 px-5">
+            <div className="w-full h-full flex gap-x-3 items-center justify-center overflow-x-scroll sm:overflow-x-hidden py-5  ">
               {categories.map((item, index) => (
                 <button
                   onClick={() => setClickedCategory(item)}
@@ -93,10 +97,10 @@ export default function Home() {
               {filteredProduct &&
                 filteredProduct.map((item, index) => (
                   <div key={index} className="w-[700px] h-auto   ">
-                    <div className="flex w-full h-full">
+                    <div className="flex w-full h-full p-1 bg-[#F4F6F6]">
                       {/* image */}
-                      <div className="w-1/3 h-[200px] border border-1 flex items-center justify-center rounded-xl border-4 border-black">
-                        <Image height={200} width={200} alt="" src="next.svg" />
+                      <div className=" flex items-center justify-center w-1/3 h-[200px] border border-1  rounded-xl border-4 border-black">
+                        <Image className="h-full w-full cover rounded-xl" height={200} width={200} alt="" src={item.img_url} />
                       </div>
                       {/* product information */}
                       <div className="w-2/3 h-full p-5">
@@ -111,8 +115,8 @@ export default function Home() {
                             </span>
                           </div>
                           {/* desc */}
-                          <div className="w-full h-full flex justify-center items-center">
-                            <span>{item.desc}</span>
+                          <div className="w-full h-full flex items-center">
+                            <span>{item.description}</span>
                           </div>
                         </div>
                       </div>

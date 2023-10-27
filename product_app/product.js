@@ -73,19 +73,6 @@ export const product = [
   },
 ];
 
-export const categories = product.reduce(
-  (acc, currentValue) => {
-    // Ürünün kategorisini al
-    const category = currentValue.category;
-
-    // Eğer kategori daha önce eklenmediyse ve "All" kategori değilse, kategoriyi ekle
-    if (!acc.includes(category) && category !== "All") {
-      acc.push(category);
-    }
-
-    return acc;
-  },
-  ["All"]
-); // Başlangıç değeri olarak "All" kategorisi ekli
+export const categories = ["All","Yağ","Sirke","Kuru Gıda","Pekmez"]
 
 

@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "axios": "^1.5.1",
+    "cookie": "^0.5.0",
     "dotenv": "^16.3.1",
     "next": "13.5.6",
+    "next-auth": "^4.24.3",
     "postgres-pool": "^8.0.0",
     "react": "^18",
     "react-dom": "^18",

@@ -2,8 +2,11 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import { categories } from "@/product";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 function Index() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -15,6 +18,11 @@ function Index() {
   const [imageFile, setImageFile] = useState();
   const [touchedFields, setTouchedFields] = useState({});
 
+  // useEffect(()=>{
+  //   if(!document.cookie.includes("token")){
+  //     router.push("/xbox/login")
+  //   }
+  // },[])
   const handleInputChange = (fieldName, value) => {
     setFormData({
       ...formData,
@@ -44,7 +52,7 @@ function Index() {
 
   const createProduct = async (e) => {
     e.preventDefault();
-    const number = Math.floor(Math.random()*99999) + 1
+    const number = Math.floor(Math.random() * 99999) + 1;
 
     // FormData nesnesi oluştur
     const data = new FormData();
@@ -62,7 +70,7 @@ function Index() {
       const productInfo = {
         title: formData.title,
         description: formData.description,
-        id:number,
+        id: number,
         price: parseInt(formData.price),
         category: formData.category,
         img_url: url,
@@ -94,7 +102,7 @@ function Index() {
         </div>
       </div>
       <div className="w-full h-full max-h-[calc(100vh_-_100px)] flex justify-center items-center">
-        <div className="w-[800px] h-[800px] border-y-4  border-black">
+        <div className="sm:w-[800px] w-full sm:h-[800px] h-full sm:border-y-4  border-black">
           <div className="p-5 w-full h-auto text-center">
             <span className="text-[30px] lg:text-[40px]">xyz</span>
           </div>
@@ -109,12 +117,15 @@ function Index() {
                 touched={touchedFields.title}
                 onChange={(value) => handleInputChange("title", value)}
               />
-              <Input
-                placeholder="Category"
-                value={formData.category}
-                touched={touchedFields.category}
-                onChange={(value) => handleInputChange("category", value)}
-              />
+              <select
+                onChange={(e) => handleInputChange("category", event.target.value)}
+                className="h-14 bg-transparent text-xs text-red-600 h-14 border"
+              >
+                <option>select</option>
+                {categories.map((item, index) => {
+                  return <option value={item} key={index}>{item}</option>;
+                })}
+              </select>
               <Input
                 placeholder="Description"
                 value={formData.description}
@@ -165,6 +176,25 @@ function Index() {
 }
 
 export default Index;
+
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+
+  // Kullanıcının çerezini kontrol et
+  if (!req.headers.cookie || !req.headers.cookie.includes("token")) {
+    // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
+    return {
+      redirect: {
+        destination: "/xbox/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}, 
+  };
+}
 
 // ınput component
 function Input(props) {

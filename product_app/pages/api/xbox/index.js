@@ -5,9 +5,7 @@ const handler = async (req, res) => {
     try {
       const getProduct = await pool.query(`SELECT * FROM public.sen_product;`);
 
-      res.status(200).json({
-        products: getProduct.rows,
-      });
+      res.status(200).json(getProduct.rows);
     } catch (err) {
       console.log(err);
       res.status(500).json({ error: "Sunucu hatası" });
@@ -17,7 +15,7 @@ const handler = async (req, res) => {
       const { title, description, price, category,img_url,id } = req.body;
       const postProduct = await pool.query(
         "INSERT INTO public.sen_product(title,description,price,img_url,category,id) VALUES ($1,$2,$3,$4,$5,$6)",
-        [title, description, price,id, category,img_url]
+        [title, description, price,img_url, category,id]
       );
       res.status(200).json({ message: "Veri gönderme işlemi başarılı." });
     } catch (err) {
