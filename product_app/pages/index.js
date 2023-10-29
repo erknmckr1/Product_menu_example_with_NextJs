@@ -24,9 +24,6 @@ export default function Home() {
     getProduct();
     
   },[])
- 
-  console.log(products)
-  
 
   useEffect(() => {
     const updatedProduct = products.length > 0 &&  products.filter((item) => {
@@ -99,7 +96,7 @@ export default function Home() {
                   <div key={index} className="w-[700px] h-auto   ">
                     <div className="flex w-full h-full p-1 bg-[#F4F6F6]">
                       {/* image */}
-                      <div className=" flex items-center justify-center w-1/3 h-[200px] border border-1  rounded-xl border-4 border-black">
+                      <div className=" flex items-center justify-center w-1/3 h-[200px]   rounded-xl border-4 border-black">
                         <Image className="h-full w-full cover rounded-xl" height={200} width={200} alt="" src={item.img_url} />
                       </div>
                       {/* product information */}

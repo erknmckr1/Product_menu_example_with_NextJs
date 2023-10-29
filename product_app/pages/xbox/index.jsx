@@ -119,7 +119,7 @@ function Index() {
               />
               <select
                 onChange={(e) => handleInputChange("category", event.target.value)}
-                className="h-14 bg-transparent text-xs text-red-600 h-14 border"
+                className="bg-transparent text-xs text-red-600 h-14 border"
               >
                 <option>select</option>
                 {categories.map((item, index) => {
