@@ -6,11 +6,12 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
- import CancelIcon from "@mui/icons-material/Close";
+import CancelIcon from "@mui/icons-material/Close";
 import Checkbox from "@mui/material/Checkbox";
 import { toast } from "react-toastify";
 import { useState, useContext } from "react";
 import axios from "axios";
+import { useRouter } from "next/router";
 import {
   GridRowModes,
   DataGrid,
@@ -23,39 +24,50 @@ import { ProductContext } from "@/context/context";
 function Products() {
   const [rowModesModel, setRowModesModel] = useState({});
   const { product } = useContext(ProductContext);
-  console.log(rowModesModel)
+  const [showEditPage, setShowEditPage] = useState(false);
+  //const [filteredProduct, setFilteredProduct] = useState();
+  const [productId,setProductId] = useState("")
+  const router = useRouter();
+
+  
   // Düzenleme moduna gecırecek event...
   const handleEditClick = (id) => {
+    // edit butonuna tıkladııgmız da id yi aldık ve ürünler içinde bu id ile eşleşen ürünü bulduk
+    const x = product.filter((item, index) => {
+      return item.id === id;
+    });
     const confirmed = window.confirm("Are you sure you want to edit the user?");
     if (confirmed) {
       setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+      setShowEditPage(true);
+      // ürün edit sayfasına tıkladıgımız urunun ıd sını gondermek ıcın state'e atıyoruz. 
+      setProductId(id)
+      router.push(`/xbox/products/${id}`)
     }
   };
 
-  const handleCancelClick = (id) =>{
+  const handleCancelClick = (id) => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
-  }
+  };
 
-  // delete product 
+  // delete product
   const handleDeleteClick = async (id) => {
-    if(window.confirm("Ürün silinsin mi ?")){
+    if (window.confirm("Ürün silinsin mi ?")) {
       try {
-        const res = await axios.delete(`/api/xbox/${id}`)
-        if(res.status === 200){
-          toast.success("Ürün başarıyla silindi.")
+        const res = await axios.delete(`/api/xbox/${id}`);
+        if (res.status === 200) {
+          toast.success("Ürün başarıyla silindi.");
         }
       } catch (err) {
-        console.log(err)
+        console.log(err);
       }
     }
-  }
+  };
 
-  const handleSaveClick = () => {
-
-  }
+  const handleSaveClick = () => {};
 
   function EditToolbar() {
     const handleClick = () => {};
@@ -64,7 +76,7 @@ function Products() {
       <GridToolbarContainer>
         <div className="w-full h-full flex justify-evenly items-center">
           <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-            Add record
+            <a href="/xbox">Ürün Ekle</a>
           </Button>
           <input
             placeholder="search"
@@ -79,34 +91,47 @@ function Products() {
     {
       field: "title",
       headerName: "Title",
-      width: 150,
+      width: 200,
       editable: false,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: "description",
       headerName: "Description",
-      width: 150,
+      width: 200,
       editable: false,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: "price",
       headerName: "Price",
       type: "number",
-      width: 150,
+      width: 200,
       editable: false,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: "image",
       headerName: "Image",
       description: "This column has a value getter and is not sortable.",
       sortable: false,
-      width: 250,
+      width: 200,
+      align: 'left',
+      headerAlign: 'left',
+      renderCell: (params) => (
+        <img className="h-12" src={params.value} alt="" />
+      ),
     },
     {
       field: "actions",
       type: "actions",
       headerName: "Actions",
       width: 200,
+      align: 'left',
+      headerAlign: 'left',
       cellClassName: "actions",
       getActions: ({ id }) => {
         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
@@ -137,14 +162,6 @@ function Products() {
             onClick={() => handleDeleteClick(id)}
             color="inherit"
           />,
-          <GridActionsCellItem
-            icon={<SaveIcon />}
-            label="Save"
-            sx={{
-              color: "primary.main",
-            }}
-            onClick={() => handleSaveClick(id)}
-          />,
         ];
       },
     },
@@ -163,7 +180,7 @@ function Products() {
     });
 
   return (
-    <div className="w-screen h-screens">
+    <div className="w-screen h-screen relative">
       {/* navbar */}
       <div className="h-[100px] w-full px-2 sm:p-0 bg-gray-300 flex justify-between ">
         <div className="sm:w-2/3 h-full flex justify-center items-center ">
@@ -177,8 +194,10 @@ function Products() {
         </div>
       </div>
       {/* navbar end */}
-      <div className="w-full h-full max-h-[calc(100vh_-_100px)] ">
-        <div className="w-full h-full flex justify-center  sm:px-10">
+      <div className="w-full h-full max-h-[calc(100vh_-_100px)] container mx-auto ">
+        <h1 className="text-[30px] sm:px-10 py-3">Ürün Listesi</h1>
+        <div className="w-full  flex justify-center  sm:px-10">
+          
           <Box sx={{ height: 400, width: "100%" }}>
             <DataGrid
               rows={rows}
@@ -198,10 +217,24 @@ function Products() {
               disableRowSelectionOnClick
             />
           </Box>
+          
+         
         </div>
       </div>
+      {/* {showEditPage && (
+        <UpdateProduct
+          filteredProduct={filteredProduct}
+          showEditPage={showEditPage}
+          setShowEditPage={setShowEditPage}
+          productId={productId}
+        />
+      )} */}
     </div>
   );
 }
 
 export default Products;
+
+// update product component xbox/login sayfasındaki bazı işlemler tekrar edılmıstır daha sonradan üstünden geçilecek.
+
+

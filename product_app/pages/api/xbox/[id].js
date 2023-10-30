@@ -24,6 +24,18 @@ const handler = async (req, res) => {
     } catch (err) {
       console.log(err);
     }
+  } else if (method === "PUT") {
+    try {
+      const { title, description, id, price, category, img_url } = req.body;
+      const updatedProduct = await pool.query(
+        "UPDATE public.sen_product SET title=$1,description=$2,price=$3,id=$4,img_url=$5,category=$6 WHERE id=$7",
+        [title, description, price, id, img_url, category, id]
+      );
+      res.status(200).json({ message: "Ürün başarıyla güncellendi" });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Ürün güncellenemedi" });
+    }
   }
 };
 
