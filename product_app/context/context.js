@@ -17,7 +17,6 @@ export const ProductProvider = ({ children }) => {
     };
     getProduct();
   }, []);
-  console.log(product)
   return (
     <ProductContext.Provider value={{ product }}>
       {children}

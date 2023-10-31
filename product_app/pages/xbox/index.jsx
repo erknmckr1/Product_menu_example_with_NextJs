@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { categories } from "@/product";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 function Index() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -97,14 +98,14 @@ function Index() {
     <div className="w-screen h-screen">
       {/* navbar */}
       <div className="h-[100px] w-full px-2 sm:p-0 bg-gray-300 flex justify-between ">
-        <div className="sm:w-2/3 h-full flex justify-center items-center">
-          <span className="text-[30px]">LOGO</span>
+      <div className="sm:w-2/3 h-full flex justify-center items-center ">
+          <Image className="w-[120px] p-1" alt="" src="/remove_logo.png" width={200} height={200}/>
         </div>
       </div>
       <div className="w-full h-full max-h-[calc(100vh_-_100px)] flex justify-center items-center">
         <div className="sm:w-[800px] w-full sm:h-[800px] h-full sm:border-y-4  border-black">
           <div className="p-5 w-full h-auto text-center">
-            <span className="text-[30px] lg:text-[40px]">xyz</span>
+            <span className="text-[30px] lg:text-[40px]">Yeni Ürün Ekle</span>
           </div>
           <form
             className="w-full px-10 h-auto bg-slate-100"

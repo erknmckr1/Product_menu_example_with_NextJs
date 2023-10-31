@@ -93,21 +93,23 @@ export default function Home() {
             <div className="w-full h-full flex flex-wrap gap-x-3 gap-y-3 ">
               {filteredProduct &&
                 filteredProduct.map((item, index) => (
-                  <div key={index} className="w-[700px] h-auto   ">
-                    <div className="flex w-full h-full p-1 bg-[#F4F6F6]">
+                  <div key={index} className="w-[700px]  h-auto  shadow hover:scale-125 transition-all origin-top-left hover:rotate-8   ">
+                    <div className="flex w-full h-full gap-x-2  bg-[#F4F6F6]">
                       {/* image */}
-                      <div className=" flex items-center justify-center w-1/3 h-[200px]   rounded-xl border-4 border-black">
+                      <div className=" flex items-center justify-center w-1/3 h-[200px] shadow2   rounded-xl  ">
+                        
                         <Image className="h-full w-full cover rounded-xl" height={200} width={200} alt="" src={item.img_url} />
+                        
                       </div>
                       {/* product information */}
-                      <div className="w-2/3 h-full p-5">
+                      <div className="w-2/3 h-full p-5 bg-[#ABEBC6]">
                         <div className="w-full h-full flex flex-col">
                           {/* title & price */}
                           <div className="flex justify-between items-center border-b-2 border-black">
-                            <span className="text-red-400 text-[20px] sm:text-[25px]">
+                            <span className=" font-semibold text-[20px] sm:text-[25px]">
                               {item.title}
                             </span>
-                            <span className="font-semibold">
+                            <span className="text-[20px] font-semibold text-red-400">
                               {item.price} £
                             </span>
                           </div>

@@ -54,7 +54,7 @@ const UpdateProduct = (props) => {
     });
   };
 
-  console.log(productsProps)
+  console.log(updatedImgFile)
 
   // dosya verisini oku uzantıyı state ata. reader nesnesi...
   const handleFileChange = (changeEvent) => {
@@ -73,28 +73,55 @@ const UpdateProduct = (props) => {
   };
 
   const handleUpdatedProduct = async () => {
-    const data = new FormData();
-    data.append("file", updatedImgFile);
-    data.append("upload_preset", "sensifa");
-
-    if (window.confirm("Ürün güncellensin mi ? ")) {
+    // Check if a new image is selected
+    if (updatedImgFile) {
+      const data = new FormData();
+      data.append("file", updatedImgFile);
+      data.append("upload_preset", "sensifa");
+  
+      if (window.confirm("Ürün güncellensin mi ? ")) {
+        try {
+          const uploadImg = await axios.post(
+            "https://api.cloudinary.com/v1_1/dtar4nbiw/image/upload",
+            data
+          );
+  
+          const { url } = uploadImg.data;
+  
+          const productInfo = {
+            title: productsProps.title,
+            description: productsProps.description,
+            ids: productsProps.id,
+            price: parseInt(productsProps.price),
+            category: productsProps.category.toLowerCase(),
+            img_url: url,
+          };
+  
+          const postProduct = await axios.put(
+            `/api/xbox/${productId}`,
+            productInfo
+          );
+          if (postProduct.status === 200) {
+            toast.success("Ürün başarıyla kaydedildi.");
+            setUpdatedImageFile("");
+            setUpdatedImageSrc("");
+          }
+        } catch (error) {
+          console.error("Hata: ", error);
+        }
+      }
+    } else {
+      // Handle the case where no new image is selected
+      const productInfo = {
+        title: productsProps.title,
+        description: productsProps.description,
+        ids: productsProps.id,
+        price: parseInt(productsProps.price),
+        category: productsProps.category.toLowerCase(),
+        img_url: updateImagedSrc,
+      };
+  
       try {
-        const uploadImg = await axios.post(
-          "https://api.cloudinary.com/v1_1/dtar4nbiw/image/upload",
-          data
-        );
-
-        const { url } = uploadImg.data;
-
-        const productInfo = {
-          title: productsProps.title,
-          description: productsProps.description,
-          ids: productsProps.id,
-          price: parseInt(productsProps.price),
-          category: productsProps.category,
-          img_url: url ? url : updateImagedSrc,
-        };
-
         const postProduct = await axios.put(
           `/api/xbox/${productId}`,
           productInfo
@@ -109,6 +136,7 @@ const UpdateProduct = (props) => {
       }
     }
   };
+  
 
   return (
     <div className="absolute left-0 top-0 w-full h-full    ">
@@ -196,6 +224,25 @@ const UpdateProduct = (props) => {
 };
 
 export default UpdateProduct;
+
+export async function getServerSideProps(context) {
+  const { req, res } = context;
+
+  // Kullanıcının çerezini kontrol et
+  if (!req.headers.cookie || !req.headers.cookie.includes("token")) {
+    // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
+    return {
+      redirect: {
+        destination: "/xbox/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {}, 
+  };
+}
 
 function Input(props) {
   const { values, placeholder, touched, errors, ...inputProps } = props;
